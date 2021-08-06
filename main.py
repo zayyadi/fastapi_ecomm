@@ -1,12 +1,19 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from tortoise.contrib.fastapi import register_tortoise
 from models import *
-from auth import gen_hashed_password
+from auth import gen_hashed_password, verify_token
 
 #signal
 from tortoise.signals import post_save
 from typing import List, Optional, Type
 from tortoise import BaseDBAsyncClient
+#response class
+from fastapi.responses import HTTPResponse
+
+#templates
+from fastapi.templating import Jinja2Templates
+
+
 
 app = FastAPI()
 
@@ -39,6 +46,15 @@ async def register(user: user_pydanticIn):
     }
 
 
+templates = Jinja2Templates(directory='templates')
+@app.get('/verification', response_class=HTTPResponse)
+async def email_verification(request: Request, token: str):
+    user = await verify_token(token)
+
+    if user and not user.is_verified:
+        user.is_verified = True
+        await user.save()
+        return templates.TemplateResponse("verification.html")
 
 @app.get("/")
 def index():
