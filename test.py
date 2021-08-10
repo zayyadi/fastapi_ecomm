@@ -1,10 +1,9 @@
-def rot(a, d):
-    b = []
-    for i in range(-d,len(a)):
-        b.append(a[i])
-    b.extend(a[0:d])
-    return b
+import bcrypt
 
-rot([1,2,3,4,5,6,7],3)
-rot([3,4,6,7,8,9,10,23], 2)
-print(list('rot'))
+password = bcrypt.hashpw(b"zayyad1", bcrypt.gensalt())
+
+print (password)
+
+def verify_password():
+    user = bcrypt.checkpw(b"zayyad1", password)
+    return user
