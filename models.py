@@ -1,4 +1,4 @@
-from tortoise import Model
+from tortoise import models
 from pydantic import BaseModel
 from tortoise import fields
 from tortoise.contrib.pydantic import pydantic_model_creator
@@ -7,7 +7,7 @@ from datetime import datetime
 # Referrences:
 # https://stackoverflow.com/questions/7296846/how-to-implement-one-to-one-one-to-many-and-many-to-many-relationships-while-de
 
-class User(Model):
+class User(models.Model):
     # fields are null = False by default but i specified it for clarity
     id = fields.IntField(pk = True, index = True)
     username = fields.CharField(max_length = 20, null = False, unique = True)
@@ -17,7 +17,7 @@ class User(Model):
     join_date = fields.DatetimeField(default = datetime.utcnow)
 
 
-class Business(Model):
+class Business(models.Model):
     id = fields.IntField(pk = True, index = True)
     business_name = fields.CharField(max_length = 20, nullable = False, unique = True)
     city = fields.CharField(max_length = 100, null = False, default = "Unspecified")
@@ -27,7 +27,7 @@ class Business(Model):
     owner = fields.ForeignKeyField('models.User', related_name='business')    
 
 
-class Product(Model):
+class Product(models.Model):
     # 12 signinficant digits, 2 of the significant digits are decimals.
     id = fields.IntField(pk = True, index = True)
     name = fields.CharField(max_length = 100, null = False, index = True)
@@ -51,9 +51,9 @@ user_pydanticIn = pydantic_model_creator(User, name = "UserIn", exclude_readonly
 user_pydanticOut = pydantic_model_creator(User, name = "UserOut", exclude = ("password", ))
 
 business_pydantic = pydantic_model_creator(Business, name = "Business")
-business_pydanticIn = pydantic_model_creator(Business, name = "Business", exclude_readonly = True)
+business_pydanticIn = pydantic_model_creator(Business, name = "Business", exclude = ("logo", "id")) #exclude_readonly = True)
 
 
 product_pydantic  = pydantic_model_creator(Product, name = "Product")
 product_pydanticIn = pydantic_model_creator(Product, name = "ProductIn", 
-                                            exclude = ("percentage_discount", "id"))
+                                            exclude = ("percentage_discount", "id", "product_image","date_published"))

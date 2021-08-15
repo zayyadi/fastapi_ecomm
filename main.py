@@ -8,7 +8,7 @@ from models import (User, Business, Product, user_pydantic, user_pydanticIn,
 # signals
 from tortoise.signals import  post_save 
 from typing import List, Optional, Type
-from tortoise import BaseDBAsyncClient
+from tortoise.backends.base.client import BaseDBAsyncClient
 
 from starlette.responses import JSONResponse
 from starlette.requests import Request
